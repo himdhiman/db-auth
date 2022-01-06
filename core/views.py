@@ -155,3 +155,12 @@ class HasAccess(APIView):
     def post(self, request):
         data = {"success" : True, "email" : request.user.email}
         return Response(data = data, status = status.HTTP_200_OK)
+
+class VerifyAdminStatus(APIView):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+    def get(self, request):
+        if request.user.is_admin:
+            data = {"success" : True}
+        else:
+            data = {"success" : False}
+        return Response(data = data, status = status.HTTP_200_OK)
