@@ -74,7 +74,7 @@ __pycache__/
 
 # Docker
 Dockerfile
-docker-compose.yml
+*.yml
 
 # Distribution / packaging
 .Python
