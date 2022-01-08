@@ -113,3 +113,11 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.email
+
+class StaticData(models.Model):
+    easy = models.IntegerField(blank = True, null = True, default = 0)
+    medium = models.IntegerField(blank = True, null = True, default = 0)
+    hard = models.IntegerField(blank = True, null = True, default = 0)
+
+    def __str__(self):
+        return "Fixed Data"
