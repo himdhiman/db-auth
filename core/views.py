@@ -23,18 +23,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = serializers.CustomTokenObtainPairSerializer
 
-    # def post(self, request, *args, **kwargs):
-    #     serializer = self.serializer_class(data=request.data)
-    #     try:
-    #         serializer.is_valid(raise_exception=True)
-    #     except TokenError as e:
-    #         raise InvalidToken(e.args[0])
-    #     data = serializer.validated_data
-    #     return_response = Response(data = {"success" : True}, status=status.HTTP_200_OK)
-    #     return_response.set_cookie(key = "refresh", value = data["refresh"], httponly=True)
-    #     return_response.set_cookie(key = "access", value = data["access"], httponly=True)
-    #     return return_response
-
 class RegisterView(APIView):
     permission_classes = (permissions.AllowAny,)
 
@@ -174,7 +162,7 @@ class VerifyAdminStatus(APIView):
         return Response(data = data, status = status.HTTP_200_OK)
 
 class UpdateScore(APIView):
-    permission_class = (permissions.AllowAny, )
+    permission_classes = (permissions.AllowAny,)
     def post(self, request):
         obj = CustomUser.objects.get(email = request["data"]["email"])
         setattr(obj, "score", obj.score + request["data"]["inc"])
@@ -183,22 +171,25 @@ class UpdateScore(APIView):
 
 
 class SetFixedData(APIView):
-    permission_class = (permissions.AllowAny, )
+    permission_classes = (permissions.AllowAny,)
+
     def post(self, request):
+        request_data = request.data
+        # print(request_data)
         obj = StaticData.objects.all()[0]
-        if request["data"]["type"] == "increase":
-            if request["data"]["field"] == "easy":
+        if request_data["type"] == "increase":
+            if request_data["field"] == "easy":
                 setattr(obj, "easy", obj.easy + 1)
-            elif request["data"]["field"] == "medium":
+            elif request_data["field"] == "medium":
                 setattr(obj, "medium", obj.medium + 1)
-            elif request["data"]["field"] == "hard":
+            elif request_data["field"] == "hard":
                 setattr(obj, "hard", obj.hard + 1)
-        if request["data"]["type"] == "decrease":
-            if request["data"]["field"] == "easy":
+        if request_data["type"] == "decrease":
+            if request_data["field"] == "easy":
                 setattr(obj, "easy", obj.easy - 1)
-            elif request["data"]["field"] == "medium":
+            elif request_data["field"] == "medium":
                 setattr(obj, "medium", obj.medium - 1)
-            elif request["data"]["field"] == "hard":
+            elif request_data["field"] == "hard":
                 setattr(obj, "hard", obj.hard - 1)
         obj.save()
         return Response(status = status.HTTP_200_OK)
