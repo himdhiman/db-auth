@@ -14,6 +14,7 @@ def get_jwt_token(user):
     decode_JWT_access = jwt.decode(tokens['access'], settings.SECRET_KEY, 'HS256')
     
     decode_JWT_refresh["user_mail"] = user.email
+    decode_JWT_refresh["is_admin"] = user.is_admin
     decode_JWT_refresh["is_verified"] = user.is_verified
     decode_JWT_refresh["first_name"] = user.first_name
     decode_JWT_refresh["last_name"] = user.last_name
@@ -22,6 +23,7 @@ def get_jwt_token(user):
 
 
     decode_JWT_access["user_mail"] = user.email
+    decode_JWT_access["is_admin"] = user.is_admin
     decode_JWT_access["is_verified"] = user.is_verified
     decode_JWT_access["first_name"] = user.first_name
     decode_JWT_access["last_name"] = user.last_name
