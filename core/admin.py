@@ -7,3 +7,4 @@ class CustomUserAdmin(admin.ModelAdmin):
 admin.site.register(models.CustomUser, CustomUserAdmin)
 admin.site.register(models.AccountVerification)
 admin.site.register(models.PasswordChange)
+admin.site.register(models.UserProfile)

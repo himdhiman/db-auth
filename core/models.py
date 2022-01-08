@@ -56,9 +56,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     profile_pic = models.TextField(default = DEFAULT_IMAGE_URL)
     joining_Date = models.DateField(auto_now = True, verbose_name = "date joined")
     last_login = models.DateField(auto_now = True, verbose_name = "last login")
-    score = models.IntegerField(blank = True, null = True, default = 0)
-    rank = models.IntegerField(blank = True, null = True, default = 0)
-    rating = models.IntegerField(blank = True, null = True, default = 0)
     is_verified = models.BooleanField(default = False)
     is_admin = models.BooleanField(default = False)
     is_active = models.BooleanField(default = True)
@@ -102,3 +99,17 @@ class PasswordChange(models.Model):
     def __str__(self):
         return self.user.email
 
+
+
+class UserProfile(models.Model):
+    email = models.EmailField(verbose_name = "email", unique = True, max_length = 60)
+    score = models.IntegerField(blank = True, null = True, default = 0)
+    rank = models.IntegerField(blank = True, null = True, default = 0)
+    rating = models.IntegerField(blank = True, null = True, default = 0)
+    hard_solved = models.IntegerField(blank = True, null = True, default = 0)
+    medium_solved = models.IntegerField(blank = True, null = True, default = 0)
+    easy_solved = models.IntegerField(blank = True, null = True, default = 0)
+    submissions = models.TextField(blank = True, null = True)
+
+    def __str__(self):
+        return self.email
