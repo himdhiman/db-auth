@@ -164,3 +164,11 @@ class VerifyAdminStatus(APIView):
         else:
             data = {"success" : False}
         return Response(data = data, status = status.HTTP_200_OK)
+
+class UpdateScore(APIView):
+    permission_class = (permissions.AllowAny, )
+    def post(self, request):
+        obj = CustomUser.objects.get(email = request["data"]["email"])
+        setattr(obj, "score", obj.score + request["data"]["inc"])
+        obj.save()
+        return Response(status = status.HTTP_200_OK)

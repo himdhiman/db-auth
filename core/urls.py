@@ -16,6 +16,7 @@ urlpatterns = [
     path('verifyUser/', views.VerifyUser.as_view()),
     path('changepassmail/', views.ChangePasswordMail.as_view()),
     path('hasAccess/', views.HasAccess.as_view()),   
-    path('isAdmin/', views.VerifyAdminStatus.as_view()),   
+    path('isAdmin/', views.VerifyAdminStatus.as_view()),
+    path('incScore/', views.UpdateScore.as_view())   
 
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
