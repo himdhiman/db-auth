@@ -165,7 +165,7 @@ class UpdateScore(APIView):
     permission_classes = (permissions.AllowAny,)
     def post(self, request):
         request_data = request.data
-        print(request_data)
+        print(request_data["email"], request_data["inc"])
         obj = UserProfile.objects.get(email = request_data["email"])
         setattr(obj, "score", obj.score + request_data["inc"])
         obj.save()
