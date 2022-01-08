@@ -167,6 +167,12 @@ class UpdateScore(APIView):
         request_data = request.data
         obj = UserProfile.objects.get(email = request_data["email"])
         setattr(obj, "score", obj.score + int(request_data["inc"]))
+        if request_data["type"] == "H":
+            setattr(obj, "hard_solved", obj.hard_solved + 1)
+        elif request_data["type"] == "M":
+            setattr(obj, "medium_solved", obj.medium_solved + 1)
+        elif request_data["type"] == "E":
+            setattr(obj, "easy_solved", obj.easy_solved + 1)
         obj.save()
         return Response(status = status.HTTP_200_OK)
 
@@ -176,7 +182,6 @@ class SetFixedData(APIView):
 
     def post(self, request):
         request_data = request.data
-        # print(request_data)
         obj = StaticData.objects.all()[0]
         if request_data["type"] == "increase":
             if request_data["field"] == "easy":
