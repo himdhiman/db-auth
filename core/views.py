@@ -1,7 +1,13 @@
 from rest_framework.views import APIView
 from core import serializers
 from rest_framework.response import Response
-from core.models import CustomUser, AccountVerification, PasswordChange, UserProfile
+from core.models import (
+    CustomUser, 
+    AccountVerification, 
+    PasswordChange, 
+    UserProfile, 
+    StaticData
+)
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions, status
 from django.conf import settings
@@ -172,5 +178,27 @@ class UpdateScore(APIView):
     def post(self, request):
         obj = CustomUser.objects.get(email = request["data"]["email"])
         setattr(obj, "score", obj.score + request["data"]["inc"])
+        obj.save()
+        return Response(status = status.HTTP_200_OK)
+
+
+class SetFixedData(APIView):
+    permission_class = (permissions.AllowAny, )
+    def post(self, request):
+        obj = StaticData.objects.all()[0]
+        if request["data"]["type"] == "increase":
+            if request["data"]["field"] == "easy":
+                setattr(obj, "easy", obj.easy + 1)
+            elif request["data"]["field"] == "medium":
+                setattr(obj, "medium", obj.medium + 1)
+            elif request["data"]["field"] == "hard":
+                setattr(obj, "hard", obj.hard + 1)
+        if request["data"]["type"] == "decrease":
+            if request["data"]["field"] == "easy":
+                setattr(obj, "easy", obj.easy - 1)
+            elif request["data"]["field"] == "medium":
+                setattr(obj, "medium", obj.medium - 1)
+            elif request["data"]["field"] == "hard":
+                setattr(obj, "hard", obj.hard - 1)
         obj.save()
         return Response(status = status.HTTP_200_OK)
