@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from core import serializers
 from rest_framework.response import Response
-from core.models import CustomUser, AccountVerification, PasswordChange
+from core.models import CustomUser, AccountVerification, PasswordChange, UserProfile
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions, status
 from django.conf import settings
@@ -93,6 +93,8 @@ class VerifyUser(APIView):
             return Response(data = {"message" : "Wrong Verification Code ❌"})
         v_obj = v_obj.first()
         user_ins = v_obj.user
+        profile_obj = UserProfile(email = user_ins.email)
+        profile_obj.save()
         if user_ins.is_verified:
             return Response(data = {"message" : "Account already Verified ✔️"})
         setattr(user_ins, "is_verified", True)

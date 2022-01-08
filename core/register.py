@@ -4,6 +4,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.conf import settings
 from datetime import date
+from core.models import UserProfile
 
 def get_jwt_token(user):
     tokens = {
@@ -88,4 +89,6 @@ def register_social_user(provider, user_id, email, name, pic):
             user.profile_pic = pic
             user.auth_provider = provider
             user.save()
+        profile_obj = UserProfile(email = user.email)
+        profile_obj.save()
         return get_jwt_token(user)
