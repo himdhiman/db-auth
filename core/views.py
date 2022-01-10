@@ -11,12 +11,7 @@ from core.models import (
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions, status
 from django.conf import settings
-import jwt, random, string, requests
-import threading
-# from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
-
-MAIL_SERVER = "https://db-mail.herokuapp.com/"
-# MAIL_SERVER = "http://mailweb:8000/"
+import jwt, random, string, requests, ast, json, threading
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -27,7 +22,7 @@ class RegisterView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def send_verification_mail(self, data):
-        requests.post(MAIL_SERVER + "verificationmail/", data)
+        requests.post(settings.MAIL_SERVER + "verificationmail/", data)
 
     def post(self, request):
         serializer = serializers.UserSerializer(data = request.data)
@@ -101,7 +96,7 @@ class ChangePasswordMail(APIView):
     permission_classes = (permissions.AllowAny, )
 
     def send_password_mail(self, data):
-        requests.post(MAIL_SERVER + "sendpassmail/", data)
+        requests.post(settings.MAIL_SERVER + "sendpassmail/", data)
 
     def post(self, request):
         email = request.data['email']
@@ -161,18 +156,45 @@ class VerifyAdminStatus(APIView):
             data = {"success" : False}
         return Response(data = data, status = status.HTTP_200_OK)
 
-class UpdateScore(APIView):
+class UpdateUserProfile(APIView):
     permission_classes = (permissions.AllowAny,)
+
+    def convert_to_list(self, data):
+        try:
+            return_data = ast.literal_eval(data)
+        except:
+            qery_list = json.dumps(data)
+            return_data = ast.literal_eval(qery_list)
+        return return_data
+    
     def post(self, request):
         request_data = request.data
         obj = UserProfile.objects.get(email = request_data["email"])
         setattr(obj, "score", obj.score + int(request_data["inc"]))
+
         if request_data["type"] == "H":
             setattr(obj, "hard_solved", obj.hard_solved + 1)
         elif request_data["type"] == "M":
             setattr(obj, "medium_solved", obj.medium_solved + 1)
         elif request_data["type"] == "E":
             setattr(obj, "easy_solved", obj.easy_solved + 1)
+        
+        if obj.submissions == "":
+            data = [
+                {
+                    "id" : int(request_data["problem_id"]),
+                    "date_time" : request_data["date_time"]
+                }
+            ]
+            setattr(obj, "submissions", str(data))
+        else:
+            list_data = self.convert_to_list(obj.submissions)
+            data = {
+                "id" : int(request_data["problem_id"]),
+                "date_time" : request_data["date_time"]
+            }
+            list_data.append(data)
+            setattr(obj, "submissions", str(data))
         obj.save()
         return Response(status = status.HTTP_200_OK)
 
