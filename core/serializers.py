@@ -84,3 +84,10 @@ class GithubSocialAuthSerializer(serializers.Serializer):
         name = user_data['name']
         DEFAULT_IMAGE_URL = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEQKASvktw8z6UeZ_lqqo01vP22M7Zca9EIw&usqp=CAU"
         return register_social_user(provider='github', user_id=user_id, email=email, name=name, pic=DEFAULT_IMAGE_URL)
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
+    class Meta:
+        model = models.UserProfile
+        fields = '__all__'

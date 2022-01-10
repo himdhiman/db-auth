@@ -18,7 +18,8 @@ urlpatterns = [
     path('hasAccess/', views.HasAccess.as_view()),   
     path('isAdmin/', views.VerifyAdminStatus.as_view()),
     path('incScore/', views.UpdateUserProfile.as_view()),
-    path('setFixedData/', views.SetFixedData.as_view())
+    path('setFixedData/', views.SetFixedData.as_view()),
+    path('getProfile/<str:id>/', views.GetUserProfile.as_view())
 
 
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
