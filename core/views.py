@@ -169,7 +169,6 @@ class UpdateUserProfile(APIView):
     
     def post(self, request):
         request_data = request.data
-        print(request_data)
         obj = UserProfile.objects.get(email = request_data["email"])
         setattr(obj, "score", obj.score + int(request_data["inc"]))
 
@@ -180,21 +179,17 @@ class UpdateUserProfile(APIView):
         elif request_data["type"] == "E":
             setattr(obj, "easy_solved", obj.easy_solved + 1)
         
-        if obj.submissions == "":
-            data = [
-                {
-                    "id" : int(request_data["problem_id"]),
-                    "date_time" : request_data["date_time"]
-                }
-            ]
+        if obj.submissions == "":   
+            data = {
+                request_data["date_time"] : [int(request_data["problem_id"])]
+            }
             setattr(obj, "submissions", str(data))
         else:
             list_data = self.convert_to_list(obj.submissions)
-            data = {
-                "id" : int(request_data["problem_id"]),
-                "date_time" : request_data["date_time"]
-            }
-            list_data.append(data)
+            if not list_data.get(request_data["date_time"]):
+                list_data[request_data["date_time"]] = [int(request_data["problem_id"])]
+            else:
+                list_data[request_data["date_time"]].append(int(request_data["problem_id"]))
             setattr(obj, "submissions", str(list_data))
         obj.save()
         return Response(status = status.HTTP_200_OK)
@@ -222,3 +217,7 @@ class SetFixedData(APIView):
                 setattr(obj, "hard", obj.hard - 1)
         obj.save()
         return Response(status = status.HTTP_200_OK)
+
+
+
+class GetUserProfile()
