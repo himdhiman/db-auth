@@ -169,7 +169,7 @@ class UpdateUserProfile(APIView):
     
     def post(self, request):
         request_data = request.data
-        request_data["date_time"] = request_data["date_time"].split(" ")[0]
+        date = request_data["date_time"].split(" ")[0]
         obj = UserProfile.objects.get(email = request_data["email"])
         setattr(obj, "score", obj.score + int(request_data["inc"]))
 
@@ -182,15 +182,15 @@ class UpdateUserProfile(APIView):
         
         if obj.submissions == "":   
             data = {
-                request_data["date_time"] : [int(request_data["problem_id"])]
+                date : [int(request_data["problem_id"])]
             }
             setattr(obj, "submissions", str(data))
         else:
             list_data = self.convert_to_list(obj.submissions)
-            if not list_data.get(request_data["date_time"]):
-                list_data[request_data["date_time"]] = [int(request_data["problem_id"])]
+            if not list_data.get(date):
+                list_data[date] = [int(request_data["problem_id"])]
             else:
-                list_data[request_data["date_time"]].append(int(request_data["problem_id"]))
+                list_data[date].append(int(request_data["problem_id"]))
             setattr(obj, "submissions", str(list_data))
         obj.save()
         return Response(status = status.HTTP_200_OK)
