@@ -220,4 +220,4 @@ class SetFixedData(APIView):
 
 
 
-class GetUserProfile()
+# class GetUserProfile()
