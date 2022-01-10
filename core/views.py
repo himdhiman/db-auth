@@ -169,6 +169,7 @@ class UpdateUserProfile(APIView):
     
     def post(self, request):
         request_data = request.data
+        request_data["date_time"] = request_data["date_time"].split(" ")[0]
         obj = UserProfile.objects.get(email = request_data["email"])
         setattr(obj, "score", obj.score + int(request_data["inc"]))
 
