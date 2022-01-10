@@ -226,3 +226,10 @@ class GetUserProfile(APIView):
         obj = UserProfile.objects.get(email = id)
         data = serializers.UserProfileSerializer(obj)
         return Response(data = data.data, status = status.HTTP_200_OK)
+
+
+class GetStaticData(APIView):
+    def get(self, request):
+        obj = StaticData.objects.all()[0]
+        data = serializers.StaticDataSerializer(obj)
+        return Response(data = data.data, status = status.HTTP_200_OK)
