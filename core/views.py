@@ -195,7 +195,7 @@ class UpdateUserProfile(APIView):
                 "date_time" : request_data["date_time"]
             }
             list_data.append(data)
-            setattr(obj, "submissions", str(data))
+            setattr(obj, "submissions", str(list_data))
         obj.save()
         return Response(status = status.HTTP_200_OK)
 
