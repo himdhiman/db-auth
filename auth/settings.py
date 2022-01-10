@@ -133,5 +133,7 @@ MEDIA_ROOT  = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 MAIL_SERVER = "https://db-mail.herokuapp.com/"
+DEFAULT_IMAGE_URL = "https://res.cloudinary.com/hhikcz56h/image/upload/v1641823025/Public/avatar1_wx1j8u.png"
+
 
 

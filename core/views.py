@@ -181,16 +181,18 @@ class UpdateUserProfile(APIView):
             setattr(obj, "easy_solved", obj.easy_solved + 1)
         
         if obj.submissions == "":   
-            data = {
-                date : [int(request_data["problem_id"])]
-            }
+            data = [
+                {
+                    date : [int(request_data["problem_id"])]
+                }
+            ]
             setattr(obj, "submissions", str(data))
         else:
             list_data = self.convert_to_list(obj.submissions)
-            if not list_data.get(date):
-                list_data[date] = [int(request_data["problem_id"])]
+            if not list_data[0].get(date):
+                list_data[0][date] = [int(request_data["problem_id"])]
             else:
-                list_data[date].append(int(request_data["problem_id"]))
+                list_data[0][date].append(int(request_data["problem_id"]))
             setattr(obj, "submissions", str(list_data))
         obj.save()
         return Response(status = status.HTTP_200_OK)

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.conf import settings
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, username, password = None):
@@ -46,14 +47,13 @@ class CustomUserManager(BaseUserManager):
 
 AUTH_PROVIDERS ={'facebook':'facebook','twitter':'twitter',
                  'email':'email','google':'google'}
-DEFAULT_IMAGE_URL = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEQKASvktw8z6UeZ_lqqo01vP22M7Zca9EIw&usqp=CAU"
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(verbose_name = "email", unique = True, max_length = 60)
     first_name = models.CharField(max_length = 20)
     last_name = models.CharField(max_length = 20)
     username = models.CharField(max_length = 30, unique = True)
-    profile_pic = models.TextField(default = DEFAULT_IMAGE_URL)
+    profile_pic = models.TextField(default = settings.DEFAULT_IMAGE_URL)
     joining_Date = models.DateField(auto_now = True, verbose_name = "date joined")
     last_login = models.DateField(auto_now = True, verbose_name = "last login")
     is_verified = models.BooleanField(default = False)
