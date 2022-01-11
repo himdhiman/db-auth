@@ -104,7 +104,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def to_representation(self, obj):
         primitive_repr = super(UserProfileSerializer, self).to_representation(obj)
         if obj.submissions != "":
-            primitive_repr['submissions'] = self.convert_to_list(obj.submissions)
+            data = self.convert_to_list(obj.submissions)
+            lst = list()
+            for i in data:
+                new_dict = {}
+                new_dict["date"] = i
+                new_dict["data_length"] = len(data[i])
+                lst.append(new_dict)
+            primitive_repr['submissions'] = lst
         return primitive_repr
 
 
