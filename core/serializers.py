@@ -4,6 +4,7 @@ from core import github, models, google
 from core.register import register_social_user
 from rest_framework.exceptions import AuthenticationFailed
 from datetime import date
+import json, ast
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -98,3 +99,16 @@ class StaticDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.StaticData
         fields = '__all__'
+
+    def convert_to_list(self, data):
+        try:
+            return_data = ast.literal_eval(data)
+        except:
+            qery_list = json.dumps(data)
+            return_data = ast.literal_eval(qery_list)
+        return return_data
+
+    def to_representation(self, obj):
+        primitive_repr = super(StaticDataSerializer, self).to_representation(obj)
+        primitive_repr['submissions'] = self.convert_to_list(obj.submissions)
+        return primitive_repr
