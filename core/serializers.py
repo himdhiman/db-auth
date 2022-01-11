@@ -93,13 +93,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = models.UserProfile
         fields = '__all__'
 
-
-class StaticDataSerializer(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField()
-    class Meta:
-        model = models.StaticData
-        fields = '__all__'
-
     def convert_to_list(self, data):
         try:
             return_data = ast.literal_eval(data)
@@ -109,6 +102,14 @@ class StaticDataSerializer(serializers.ModelSerializer):
         return return_data
 
     def to_representation(self, obj):
-        primitive_repr = super(StaticDataSerializer, self).to_representation(obj)
-        primitive_repr['submissions'] = self.convert_to_list(obj.submissions)
+        primitive_repr = super(UserProfileSerializer, self).to_representation(obj)
+        if obj.submissions != "":
+            primitive_repr['submissions'] = self.convert_to_list(obj.submissions)
         return primitive_repr
+
+
+class StaticDataSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
+    class Meta:
+        model = models.StaticData
+        fields = '__all__'
