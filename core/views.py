@@ -222,8 +222,8 @@ class SetFixedData(APIView):
 
 
 class GetUserProfile(APIView):
-    def get(self, request, id):
-        obj = UserProfile.objects.get(email = id)
+    def get(self, request):
+        obj = UserProfile.objects.get(email = request.user.email)
         data = serializers.UserProfileSerializer(obj)
         return Response(data = data.data, status = status.HTTP_200_OK)
 

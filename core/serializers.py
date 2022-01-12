@@ -1,4 +1,3 @@
-from _typeshed import Self
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from core import github, models, google
@@ -112,10 +111,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
             data = self.convert_to_list(obj.submissions)
             lst = list()
             for i in data:
-                date_temp = date.split("-")
-                date = date_temp[-1] + f" {self.mapping_list[int(date_temp[-2]) - 1]}"
+                date_temp = i.split("-")
+                new_date = date_temp[-1] + f" {self.mapping_list[int(date_temp[-2]) - 1]}"
                 new_dict = {}
-                new_dict[date] = i
+                new_dict["date"] = new_date
                 new_dict["Questions Solved"] = len(data[i])
                 lst.append(new_dict)
             primitive_repr['submissions'] = lst

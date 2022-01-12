@@ -19,7 +19,7 @@ urlpatterns = [
     path('isAdmin/', views.VerifyAdminStatus.as_view()),
     path('incScore/', views.UpdateUserProfile.as_view()),
     path('setFixedData/', views.SetFixedData.as_view()),
-    path('getProfile/<str:id>/', views.GetUserProfile.as_view()),
+    path('getProfile/', views.GetUserProfile.as_view()),
     path('getStaticData/', views.GetStaticData.as_view())
 
 
