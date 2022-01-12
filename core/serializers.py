@@ -1,3 +1,4 @@
+from _typeshed import Self
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from core import github, models, google
@@ -89,6 +90,10 @@ class GithubSocialAuthSerializer(serializers.Serializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
+    mapping_list = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", 
+        "Sept", "Oct", "Nov", "Dec"
+    ]
     class Meta:
         model = models.UserProfile
         fields = '__all__'
@@ -107,9 +112,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
             data = self.convert_to_list(obj.submissions)
             lst = list()
             for i in data:
+                date_temp = date.split("-")
+                date = date_temp[-1] + f" {self.mapping_list[int(date_temp[-2]) - 1]}"
                 new_dict = {}
-                new_dict["date"] = i
-                new_dict["data_length"] = len(data[i])
+                new_dict[date] = i
+                new_dict["Questions Solved"] = len(data[i])
                 lst.append(new_dict)
             primitive_repr['submissions'] = lst
         return primitive_repr
