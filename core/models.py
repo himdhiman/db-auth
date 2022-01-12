@@ -1,5 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import (
+        AbstractBaseUser, 
+        BaseUserManager, 
+        PermissionsMixin
+    )
 from django.conf import settings
 
 class CustomUserManager(BaseUserManager):
@@ -45,10 +49,13 @@ class CustomUserManager(BaseUserManager):
         return user
 
 
-AUTH_PROVIDERS ={'facebook':'facebook','twitter':'twitter',
-                 'email':'email','google':'google'}
-
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    AUTH_PROVIDERS = {
+        "facebook" : "facebook",
+        "twitter" : "twitter",
+        "email" : "email",
+        "google" : "google"
+    }
     email = models.EmailField(verbose_name = "email", unique = True, max_length = 60)
     first_name = models.CharField(max_length = 20)
     last_name = models.CharField(max_length = 20)
@@ -66,7 +73,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         null = False , default = AUTH_PROVIDERS.get('email')
     )
 
-
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'username']
 
@@ -82,14 +88,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return True
 
 
-
 class AccountVerification(models.Model):
     user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
     verification_code = models.TextField()
 
     def __str__(self):
         return self.user.email
-
 
 class PasswordChange(models.Model):
     user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
@@ -98,8 +102,6 @@ class PasswordChange(models.Model):
 
     def __str__(self):
         return self.user.email
-
-
 
 class UserProfile(models.Model):
     email = models.EmailField(verbose_name = "email", unique = True, max_length = 60)

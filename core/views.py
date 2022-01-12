@@ -11,11 +11,13 @@ from core.models import (
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions, status
 from django.conf import settings
-import jwt, random, string, requests, ast, json, threading
+import jwt, random, string, requests, threading
+from core.helper import convert_to_list
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     permission_classes = (permissions.AllowAny,)
+
     serializer_class = serializers.CustomTokenObtainPairSerializer
 
 class RegisterView(APIView):
@@ -46,6 +48,7 @@ class RegisterView(APIView):
 
 class UserNameExisits(APIView):
     permission_classes = (permissions.AllowAny,)
+
     def post(self, request):
         username = request.data['username']
         obj = CustomUser.objects.filter(username = username)
@@ -56,6 +59,7 @@ class UserNameExisits(APIView):
 
 class EmailExisits(APIView):
     permission_classes = (permissions.AllowAny,)
+
     def post(self, request):
         email = request.data['email']
         obj = CustomUser.objects.filter(email = email)
@@ -65,16 +69,15 @@ class EmailExisits(APIView):
 
 
 class GetUserData(APIView):
+
     def get(self, request):
-        access_token = request.headers['Authorization'].split(' ')[1]
-        data = jwt.decode(access_token, settings.SECRET_KEY , 'HS256')
-        user_ins = CustomUser.objects.get(id = data['user_id'])
-        user_data = serializers.CustomUserSerializer(user_ins)
+        user_data = serializers.CustomUserSerializer(request.user)
         return Response(data = user_data.data , status=status.HTTP_200_OK)
 
 
 class VerifyUser(APIView):
     permission_classes = (permissions.AllowAny,)
+
     def post(self, request):
         verification_code = request.data['verification_code']
         v_obj = AccountVerification.objects.filter(verification_code = verification_code)
@@ -158,15 +161,7 @@ class VerifyAdminStatus(APIView):
 
 class UpdateUserProfile(APIView):
     permission_classes = (permissions.AllowAny,)
-
-    def convert_to_list(self, data):
-        try:
-            return_data = ast.literal_eval(data)
-        except:
-            qery_list = json.dumps(data)
-            return_data = ast.literal_eval(qery_list)
-        return return_data
-    
+   
     def post(self, request):
         request_data = request.data
         date = request_data["date_time"].split(" ")[0]
@@ -186,7 +181,7 @@ class UpdateUserProfile(APIView):
                 }
             setattr(obj, "submissions", str(data))
         else:
-            list_data = self.convert_to_list(obj.submissions)
+            list_data = convert_to_list(obj.submissions)
             if not list_data.get(date):
                 list_data[date] = [int(request_data["problem_id"])]
             else:
