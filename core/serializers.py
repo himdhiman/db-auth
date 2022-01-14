@@ -78,7 +78,6 @@ class GithubSocialAuthSerializer(serializers.Serializer):
 
     def validate_auth_token(self, auth_token):
         user_data = github.Github.validate(auth_token)
-        print(user_data)
         try:
             user_data['email']
         except:
@@ -90,7 +89,7 @@ class GithubSocialAuthSerializer(serializers.Serializer):
         name = user_data['name']
         return register_social_user(
             provider = 'github', user_id = user_id, email = email, 
-            name=name, pic = settings.DEFAULT_IMAGE_URL
+            name=name, pic = user_data["avatar_url"]
         )
 
 

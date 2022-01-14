@@ -32,6 +32,7 @@ class Github:
                         break
                 send_data["username"] = response.json()["login"]
                 send_data["name"] = response.json()["name"]
+                send_data["avatar_url"] = response.json()["avatar_url"]
                 return send_data
             else:
                 return "The token is either invalid or has expired"

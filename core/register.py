@@ -57,7 +57,6 @@ def register_social_user(provider, user_id, email, name, pic):
             user = filtered_user_by_email[0]
             return get_jwt_token(user)
         else:
-            print("error")
             raise AuthenticationFailed(detail = "Please continue your login using " + filtered_user_by_email[0].auth_provider)
     else:
         if(name):
