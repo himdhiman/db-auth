@@ -78,6 +78,7 @@ class GithubSocialAuthSerializer(serializers.Serializer):
 
     def validate_auth_token(self, auth_token):
         user_data = github.Github.validate(auth_token)
+        print(user_data)
         try:
             user_data['email']
         except:
