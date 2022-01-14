@@ -11,8 +11,9 @@ from core.models import (
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions, status
 from django.conf import settings
-import jwt, random, string, requests, threading
+import random, string, requests, threading
 from core.helper import convert_to_list
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -44,6 +45,20 @@ class RegisterView(APIView):
                 threading.Thread(target = self.send_verification_mail, args = (data, )).start()
                 return Response(json, status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+
+class LogoutView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
+
+    def post(self, request):
+        try:
+            refresh_token = request.data["refresh_token"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response(status = status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response(status = status.HTTP_400_BAD_REQUEST)
 
 
 class UserNameExisits(APIView):
