@@ -3,7 +3,6 @@ import os
 from datetime import timedelta
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 SECRET_KEY = '==j!mr944jm)-1jho*(59ol)za$q9-yu$2!!l0c+fah04yuslg'
 
 DEBUG = True
@@ -95,7 +94,6 @@ DATABASES = {
     }
 }
 
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -110,7 +108,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 LANGUAGE_CODE = 'en-us'
 
@@ -127,8 +124,6 @@ CORS_ALLOW_CREDENTIALS = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
-
-
 
 MEDIA_ROOT  = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'

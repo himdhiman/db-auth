@@ -16,6 +16,7 @@ urlpatterns = [
     path('existEmail/', views.EmailExisits.as_view()),
     path('verifyUser/', views.VerifyUser.as_view()),
     path('changepassmail/', views.ChangePasswordMail.as_view()),
+    path('resetPass/', views.ResetPassword.as_view()),
     path('hasAccess/', views.HasAccess.as_view()),   
     path('isAdmin/', views.VerifyAdminStatus.as_view()),
     path('incScore/', views.UpdateUserProfile.as_view()),

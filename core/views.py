@@ -120,6 +120,8 @@ class ChangePasswordMail(APIView):
         email = request.data['email']
         try:
             user_ins = CustomUser.objects.get(email = email)
+            if(user_ins.auth_provider != "email"):
+                return Response(data = "Continue login using " + user_ins.auth_provider, status = status.HTTP_400_BAD_REQUEST)
             pass_slug = ''.join(random.choices(string.ascii_uppercase + string.digits, k = 10))
             pass_slug += str(user_ins.id)
             filter_data = PasswordChange.objects.filter(user = user_ins)
@@ -138,7 +140,26 @@ class ChangePasswordMail(APIView):
             threading.Thread(target = self.send_password_mail, args = (data, )).start()
             return Response(status = status.HTTP_200_OK)
         except:
-            return Response(status = status.HTTP_400_BAD_REQUEST)
+            return Response(data = "Invalid Mail ID", status = status.HTTP_400_BAD_REQUEST)
+
+
+class ResetPassword(APIView):
+    permission_classes = (permissions.AllowAny, )
+
+    def post(self, request):
+        verification_code = request.data['verification_code']
+        password = request.data["new_password"]
+        p_obj = PasswordChange.objects.filter(pass_slug = verification_code)
+        if len(p_obj) == 0:
+            return Response(data = {"message" : "Wrong Verification Code ❌"})
+        p_obj = p_obj.first()
+        user_ins = p_obj.user
+        if not user_ins.is_verified:
+            return Response(data = {"message" : "Account not verified ❌"})
+        user_ins.set_password(password)
+        user_ins.save()
+        p_obj.delete()
+        return Response(data = {"message" : "Password Reset Successfull ✔️"})
 
 class GoogleSocialAuthView(APIView):
     permission_classes = (permissions.AllowAny, )
