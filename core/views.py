@@ -151,15 +151,15 @@ class ResetPassword(APIView):
         password = request.data["new_password"]
         p_obj = PasswordChange.objects.filter(pass_slug = verification_code)
         if len(p_obj) == 0:
-            return Response(data = {"message" : "Wrong Verification Code ❌"})
+            return Response(data = {"message" : "Wrong Verification Code ❌"}, status = status.HTTP_400_BAD_REQUEST)
         p_obj = p_obj.first()
         user_ins = p_obj.user
         if not user_ins.is_verified:
-            return Response(data = {"message" : "Account not verified ❌"})
+            return Response(data = {"message" : "Account not verified ❌"}, status = status.HTTP_400_BAD_REQUEST)
         user_ins.set_password(password)
         user_ins.save()
         p_obj.delete()
-        return Response(data = {"message" : "Password Reset Successfull ✔️"})
+        return Response(data = {"message" : "Password Reset Successfull ✔️"}, status = status.HTTP_200_OK)
 
 class GoogleSocialAuthView(APIView):
     permission_classes = (permissions.AllowAny, )
