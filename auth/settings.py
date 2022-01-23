@@ -1,10 +1,12 @@
 from pathlib import Path
 import os
 from datetime import timedelta
+from django.core.management.utils import get_random_secret_key
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = "==j!mr944jm)-1jho*(59ol)za$q9-yu$2!!l0c+fah04yuslg"
+# SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 
 DEBUG = True
 
