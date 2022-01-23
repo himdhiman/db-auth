@@ -9,8 +9,8 @@ class Github:
         baseURLData = "https://api.github.com/user"
         baseURLMail = "https://api.github.com/user/emails"
         send_data = {
-            "client_id": "4070334dbe20cf539952",
-            "client_secret": "0abb240c2d9c8b063e35a8f812b48107a2c4aa0b",
+            "client_id": "5e147d14c903b5f7ba11",
+            "client_secret": "bff0dc0892846fba69b01e9578d41f1456eaa30e",
             "code": auth_token,
             "redirect_uri": "",
         }
