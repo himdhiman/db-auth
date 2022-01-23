@@ -6,17 +6,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0006_auto_20220108_1652'),
+        ("core", "0006_auto_20220108_1652"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='StaticData',
+            name="StaticData",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('easy', models.IntegerField(blank=True, default=0, null=True)),
-                ('medium', models.IntegerField(blank=True, default=0, null=True)),
-                ('hard', models.IntegerField(blank=True, default=0, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("easy", models.IntegerField(blank=True, default=0, null=True)),
+                ("medium", models.IntegerField(blank=True, default=0, null=True)),
+                ("hard", models.IntegerField(blank=True, default=0, null=True)),
             ],
         ),
     ]

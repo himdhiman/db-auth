@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0007_staticdata'),
+        ("core", "0007_staticdata"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='customuser',
-            name='profile_pic',
-            field=models.TextField(default='https://res.cloudinary.com/hhikcz56h/image/upload/v1641823025/Public/avatar1_wx1j8u.png'),
+            model_name="customuser",
+            name="profile_pic",
+            field=models.TextField(
+                default="https://res.cloudinary.com/hhikcz56h/image/upload/v1641823025/Public/avatar1_wx1j8u.png"
+            ),
         ),
     ]

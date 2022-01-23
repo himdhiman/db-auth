@@ -6,14 +6,15 @@ from django.conf import settings
 from datetime import date
 from core.models import UserProfile
 
+
 def get_jwt_token(user):
     tokens = {
-        'refresh' : str(RefreshToken.for_user(user)),
-        'access' : str(RefreshToken.for_user(user).access_token)
+        "refresh": str(RefreshToken.for_user(user)),
+        "access": str(RefreshToken.for_user(user).access_token),
     }
-    decode_JWT_refresh = jwt.decode(tokens['refresh'], settings.SECRET_KEY, 'HS256')
-    decode_JWT_access = jwt.decode(tokens['access'], settings.SECRET_KEY, 'HS256')
-    
+    decode_JWT_refresh = jwt.decode(tokens["refresh"], settings.SECRET_KEY, "HS256")
+    decode_JWT_access = jwt.decode(tokens["access"], settings.SECRET_KEY, "HS256")
+
     decode_JWT_refresh["user_mail"] = user.email
     decode_JWT_refresh["is_admin"] = user.is_admin
     decode_JWT_refresh["is_verified"] = user.is_verified
@@ -21,7 +22,6 @@ def get_jwt_token(user):
     decode_JWT_refresh["last_name"] = user.last_name
     decode_JWT_refresh["username"] = user.username
     decode_JWT_refresh["profile_pic"] = user.profile_pic
-
 
     decode_JWT_access["user_mail"] = user.email
     decode_JWT_access["is_admin"] = user.is_admin
@@ -31,22 +31,23 @@ def get_jwt_token(user):
     decode_JWT_access["username"] = user.username
     decode_JWT_access["profile_pic"] = user.profile_pic
 
-
-    tokens['refresh'] = jwt.encode(decode_JWT_refresh, settings.SECRET_KEY, 'HS256')
-    tokens['access'] = jwt.encode(decode_JWT_access, settings.SECRET_KEY, 'HS256')
+    tokens["refresh"] = jwt.encode(decode_JWT_refresh, settings.SECRET_KEY, "HS256")
+    tokens["access"] = jwt.encode(decode_JWT_access, settings.SECRET_KEY, "HS256")
 
     user.last_login = date.today()
     user.save()
     return tokens
 
+
 def generate_username(name):
     User = get_user_model()
-    username = "".join(name.split(' ')).lower()
+    username = "".join(name.split(" ")).lower()
     if not User.objects.filter(username=username).exists():
         return username
     else:
         random_username = username + str(random.randint(0, 1000))
         return generate_username(random_username)
+
 
 def register_social_user(provider, user_id, email, name, pic):
     User = get_user_model()
@@ -57,24 +58,27 @@ def register_social_user(provider, user_id, email, name, pic):
             user = filtered_user_by_email[0]
             return get_jwt_token(user)
         else:
-            raise AuthenticationFailed(detail = "Please continue your login using " + filtered_user_by_email[0].auth_provider)
+            raise AuthenticationFailed(
+                detail="Please continue your login using "
+                + filtered_user_by_email[0].auth_provider
+            )
     else:
-        if(name):
+        if name:
             splitted_name = name.split(" ")
             user = {
-                'username': generate_username(name), 
-                'email': email,
-                'password': settings.SECRET_KEY,
-                'first_name' : splitted_name[0],
-                'last_name' : splitted_name[-1],
+                "username": generate_username(name),
+                "email": email,
+                "password": settings.SECRET_KEY,
+                "first_name": splitted_name[0],
+                "last_name": splitted_name[-1],
             }
         else:
             user = {
-                'username': user_id, 
-                'email': email,
-                'password': settings.SECRET_KEY,
-                'first_name' : user_id,
-                'last_name' : user_id,
+                "username": user_id,
+                "email": email,
+                "password": settings.SECRET_KEY,
+                "first_name": user_id,
+                "last_name": user_id,
             }
         try:
             user = User.objects.create_user(**user)
@@ -89,6 +93,6 @@ def register_social_user(provider, user_id, email, name, pic):
             user.profile_pic = pic
             user.auth_provider = provider
             user.save()
-        profile_obj = UserProfile(email = user.email)
+        profile_obj = UserProfile(email=user.email)
         profile_obj.save()
         return get_jwt_token(user)
