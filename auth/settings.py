@@ -5,10 +5,9 @@ from django.core.management.utils import get_random_secret_key
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "==j!mr944jm)-1jho*(59ol)za$q9-yu$2!!l0c+fah04yuslg"
-# SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
-DEBUG = True
+DEBUG = os.environ.get("DEBUG")
 
 ALLOWED_HOSTS = ["*"]
 
@@ -23,7 +22,6 @@ INSTALLED_APPS = [
     "core",
     "corsheaders",
     "rest_framework.authtoken",
-    # "rest_framework_simplejwt.token_blacklist",
 ]
 
 REST_FRAMEWORK = {
@@ -87,10 +85,10 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "de034rtace4brg",
-        "USER": "qvsdyynzbsoree",
-        "PASSWORD": "3877c4d8fcc8881765598b8f00730dc745727026f39475bc0ee65e1bce98da8b",
-        "HOST": "ec2-3-212-172-25.compute-1.amazonaws.com",
+        "NAME": os.environ.get("DB_NAME"),
+        "USER": os.environ.get("DB_USER"),
+        "PASSWORD": os.environ.get("DB_PASSWORD"),
+        "HOST": os.environ.get("DB_HOST"),
         "PORT": 5432,
     }
 }
@@ -129,5 +127,5 @@ STATIC_URL = "/static/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
-MAIL_SERVER = "https://db-mail.herokuapp.com/"
+MAIL_SERVER = os.environ.get("MAIL_SERVER")
 DEFAULT_IMAGE_URL = "https://res.cloudinary.com/hhikcz56h/image/upload/v1643296521/Public/icons8-smurf-240_ocqbjv.png"

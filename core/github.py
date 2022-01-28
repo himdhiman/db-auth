@@ -1,6 +1,4 @@
-from os import access
-import requests
-
+import os, requests
 
 class Github:
     @staticmethod
@@ -9,8 +7,8 @@ class Github:
         baseURLData = "https://api.github.com/user"
         baseURLMail = "https://api.github.com/user/emails"
         send_data = {
-            "client_id": "5e147d14c903b5f7ba11",
-            "client_secret": "bff0dc0892846fba69b01e9578d41f1456eaa30e",
+            "client_id": os.environ.get("GITHUB_CLIENT_ID"),
+            "client_secret": os.environ.get("GITHUB_CLIENT_SECRET"),
             "code": auth_token,
             "redirect_uri": "",
         }
