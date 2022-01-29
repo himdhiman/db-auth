@@ -1,7 +1,6 @@
 from pathlib import Path
-import os
+import os, cloudinary, cloudinary.uploader, cloudinary.api
 from datetime import timedelta
-from django.core.management.utils import get_random_secret_key
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -129,3 +128,14 @@ MEDIA_URL = "/media/"
 
 MAIL_SERVER = os.environ.get("MAIL_SERVER")
 DEFAULT_IMAGE_URL = "https://res.cloudinary.com/hhikcz56h/image/upload/v1643296521/Public/icons8-smurf-240_ocqbjv.png"
+
+# Cloudinary Settings
+
+cloudinary.config(
+    cloud_name = os.environ.get("cloud_name"),
+    api_key = os.environ.get("api_key"),
+    api_secret = os.environ.get("api_secret"),
+    secure = True,
+)
+
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"

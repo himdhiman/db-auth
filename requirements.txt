@@ -3,6 +3,7 @@ cachetools==4.2.2
 certifi==2021.5.30
 cffi==1.14.6
 charset-normalizer==2.0.4
+cloudinary==1.28.1
 cryptography==3.4.7
 defusedxml==0.7.1
 dj-database-url==0.5.0

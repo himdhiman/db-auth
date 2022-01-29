@@ -6,7 +6,10 @@ from django.contrib.auth.models import (
 )
 from django.conf import settings
 from django.dispatch import receiver
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save
+from cloudinary.models import CloudinaryField
+import threading
+from core.helper import delete_cloudinary_image
 
 
 class CustomUserManager(BaseUserManager):
@@ -125,12 +128,37 @@ class StaticData(models.Model):
     easy = models.IntegerField(blank=True, null=True, default=0)
     medium = models.IntegerField(blank=True, null=True, default=0)
     hard = models.IntegerField(blank=True, null=True, default=0)
+    avatar_count = models.IntegerField(blank=True, null=True, default=0)
 
     def __str__(self):
         return "Fixed Data"
+
+class Avatar(models.Model):
+    name = models.CharField(max_length = 20, blank = True, null = True)
+    image = CloudinaryField("image")
+
+    def __str__(self):
+        return self.name
 
 
 @receiver(pre_delete, sender=CustomUser)
 def before_deleting_user(sender, instance, *args, **kwargs):
     UserProfile.objects.filter(email=instance.email).delete()
+    return
+
+@receiver(post_save, sender=Avatar)
+def after_creating_avatar(sender, instance, *args, **kwargs):
+    obj = StaticData.objects.all().first()
+    setattr(obj, "avatar_count", obj.avatar_count + 1)
+    obj.save()
+    return
+
+@receiver(pre_delete, sender=Avatar)
+def before_deleting_avatar(sender, instance, *args, **kwargs):
+    obj = StaticData.objects.all().first()
+    setattr(obj, "avatar_count", obj.avatar_count - 1)
+    obj.save()
+    threading.Thread(
+        target=delete_cloudinary_image, args=(instance.image.public_id,)
+    ).start()
     return
