@@ -4,11 +4,10 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin,
 )
-from django.conf import settings
 from django.dispatch import receiver
 from django.db.models.signals import pre_delete, post_save
 from cloudinary.models import CloudinaryField
-import threading
+import threading, random
 from core.helper import delete_cloudinary_image
 
 
@@ -66,7 +65,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
     username = models.CharField(max_length=30, unique=True)
-    profile_pic = models.TextField(default=settings.DEFAULT_IMAGE_URL)
+    profile_pic = models.TextField(blank=True, null=True)
     joining_Date = models.DateField(auto_now=True, verbose_name="date joined")
     last_login = models.DateField(auto_now=True, verbose_name="last login")
     is_verified = models.BooleanField(default=False)
@@ -139,6 +138,15 @@ class Avatar(models.Model):
 
     def __str__(self):
         return self.name
+
+@receiver(post_save, sender=CustomUser)
+def after_creating_user(sender, instance, *args, **kwargs):
+    obj = StaticData.objects.all().first()
+    num = random.randint(0, obj.avatar_count - 1)
+    avatar_objs = Avatar.objects.all()
+    setattr(instance, "profile_pic", avatar_objs[num].image.url)
+    instance.save()
+    return
 
 
 @receiver(pre_delete, sender=CustomUser)

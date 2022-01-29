@@ -127,7 +127,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
 MAIL_SERVER = os.environ.get("MAIL_SERVER")
-DEFAULT_IMAGE_URL = "https://res.cloudinary.com/hhikcz56h/image/upload/v1643296521/Public/icons8-smurf-240_ocqbjv.png"
 
 # Cloudinary Settings
 
