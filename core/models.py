@@ -49,6 +49,7 @@ class CustomUserManager(BaseUserManager):
         user.is_staff = True
         user.is_superuser = True
         user.is_verified = True
+        user.profile_pic = "https://res.cloudinary.com/hhikcz56h/image/upload/v1643479821/aynjv7xxuyrbop7chlor.png"
 
         user.save(using=self._db)
         return user
@@ -138,16 +139,6 @@ class Avatar(models.Model):
 
     def __str__(self):
         return self.name
-
-@receiver(post_save, sender=CustomUser)
-def after_creating_user(sender, instance, *args, **kwargs):
-    obj = StaticData.objects.all().first()
-    num = random.randint(0, obj.avatar_count - 1)
-    avatar_objs = Avatar.objects.all()
-    setattr(instance, "profile_pic", avatar_objs[num].image.url)
-    instance.save()
-    return
-
 
 @receiver(pre_delete, sender=CustomUser)
 def before_deleting_user(sender, instance, *args, **kwargs):

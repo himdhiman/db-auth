@@ -7,6 +7,7 @@ from core.models import (
     PasswordChange,
     UserProfile,
     StaticData,
+    Avatar,
 )
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions, status
@@ -14,6 +15,7 @@ from django.conf import settings
 import random, string, requests, threading
 from core.helper import convert_to_list
 from rest_framework_simplejwt.tokens import RefreshToken
+import random
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -33,6 +35,12 @@ class RegisterView(APIView):
         if serializer.is_valid():
             user = serializer.save()
             if user:
+                cutstomUser = CustomUser.objects.get(id = user.id)
+                obj = StaticData.objects.all().first()
+                num = random.randint(0, obj.avatar_count - 1)
+                avatar_objs = Avatar.objects.all()
+                setattr(cutstomUser, "profile_pic", avatar_objs[num].image.url)
+                cutstomUser.save()
                 json = serializer.data
                 verification_code = "".join(
                     random.choices(string.ascii_uppercase + string.digits, k=10)
