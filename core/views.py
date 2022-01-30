@@ -14,8 +14,7 @@ from rest_framework import permissions, status
 from django.conf import settings
 import random, string, requests, threading
 from core.helper import convert_to_list
-from rest_framework_simplejwt.tokens import RefreshToken
-import random
+# from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -292,7 +291,7 @@ class GetUserProfile(APIView):
 
 
 class GetStaticData(APIView):
-    def get(self, request):
+    def get(self, _):
         obj = StaticData.objects.all()[0]
         data = serializers.StaticDataSerializer(obj)
         return Response(data=data.data, status=status.HTTP_200_OK)
