@@ -1,5 +1,6 @@
 import os, requests
 
+
 class Github:
     @staticmethod
     def validate(auth_token):

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0011_staticdata_avatar_count'),
+        ("core", "0011_staticdata_avatar_count"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='customuser',
-            name='profile_pic',
+            model_name="customuser",
+            name="profile_pic",
             field=models.TextField(blank=True, null=True),
         ),
     ]

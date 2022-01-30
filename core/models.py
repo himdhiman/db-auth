@@ -133,17 +133,20 @@ class StaticData(models.Model):
     def __str__(self):
         return "Fixed Data"
 
+
 class Avatar(models.Model):
-    name = models.CharField(max_length = 20, blank = True, null = True)
+    name = models.CharField(max_length=20, blank=True, null=True)
     image = CloudinaryField("image")
 
     def __str__(self):
         return self.name
 
+
 @receiver(pre_delete, sender=CustomUser)
 def before_deleting_user(sender, instance, *args, **kwargs):
     UserProfile.objects.filter(email=instance.email).delete()
     return
+
 
 @receiver(post_save, sender=Avatar)
 def after_creating_avatar(sender, instance, *args, **kwargs):
@@ -151,6 +154,7 @@ def after_creating_avatar(sender, instance, *args, **kwargs):
     setattr(obj, "avatar_count", obj.avatar_count + 1)
     obj.save()
     return
+
 
 @receiver(pre_delete, sender=Avatar)
 def before_deleting_avatar(sender, instance, *args, **kwargs):

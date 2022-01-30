@@ -35,7 +35,7 @@ class RegisterView(APIView):
         if serializer.is_valid():
             user = serializer.save()
             if user:
-                cutstomUser = CustomUser.objects.get(id = user.id)
+                cutstomUser = CustomUser.objects.get(id=user.id)
                 obj = StaticData.objects.all().first()
                 num = random.randint(0, obj.avatar_count - 1)
                 avatar_objs = Avatar.objects.all()
