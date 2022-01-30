@@ -7,7 +7,7 @@ from django.contrib.auth.models import (
 from django.dispatch import receiver
 from django.db.models.signals import pre_delete, post_save
 from cloudinary.models import CloudinaryField
-import threading, random
+import threading
 from core.helper import delete_cloudinary_image
 
 
