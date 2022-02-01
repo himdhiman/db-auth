@@ -13,3 +13,5 @@ def convert_to_list(data):
 def delete_cloudinary_image(public_id):
     cloudinary.uploader.destroy(public_id, resource_type="image")
     return
+
+

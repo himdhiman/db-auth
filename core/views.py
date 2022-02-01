@@ -7,12 +7,11 @@ from core.models import (
     PasswordChange,
     UserProfile,
     StaticData,
-    Avatar,
 )
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions, status
 from django.conf import settings
-import random, string, requests, threading
+import random, string, requests, threading, requests
 from core.helper import convert_to_list
 # from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -34,13 +33,6 @@ class RegisterView(APIView):
         if serializer.is_valid():
             user = serializer.save()
             if user:
-                cutstomUser = CustomUser.objects.get(id=user.id)
-                obj = StaticData.objects.all().first()
-                num = random.randint(0, obj.avatar_count - 1)
-                avatar_objs = Avatar.objects.all()
-                setattr(cutstomUser, "profile_pic", avatar_objs[num].image.url)
-                cutstomUser.save()
-                json = serializer.data
                 verification_code = "".join(
                     random.choices(string.ascii_uppercase + string.digits, k=10)
                 )
@@ -57,7 +49,7 @@ class RegisterView(APIView):
                 threading.Thread(
                     target=self.send_verification_mail, args=(data,)
                 ).start()
-                return Response(json, status=status.HTTP_201_CREATED)
+                return Response(data = serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -79,13 +71,12 @@ class UserNameExisits(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        username = request.data["username"]
-        obj = CustomUser.objects.filter(username=username)
+        obj = CustomUser.objects.filter(username=request.data["username"])
         if len(obj) > 0:
-            return Response(data={"message": "UserName Exists !"})
+            return Response(data={"message": "UserName Exists !"}, status=status.HTTP_200_OK)
         return Response(
             data={"success": True, "message": "UserName Available"},
-            status=status.HTTP_200_OK,
+            status=status.HTTP_200_OK
         )
 
 
@@ -93,10 +84,9 @@ class EmailExisits(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        email = request.data["email"]
-        obj = CustomUser.objects.filter(email=email)
+        obj = CustomUser.objects.filter(email=request.data["email"])
         if len(obj) > 0:
-            return Response(data={"message": "Email Exists !"})
+            return Response(data={"message": "Email Exists !"}, status=status.HTTP_200_OK)
         return Response(
             data={"success": True, "message": "Email Available"},
             status=status.HTTP_200_OK,
@@ -113,20 +103,19 @@ class VerifyUser(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        verification_code = request.data["verification_code"]
-        v_obj = AccountVerification.objects.filter(verification_code=verification_code)
+        v_obj = AccountVerification.objects.filter(verification_code=request.data["verification_code"])
         if len(v_obj) == 0:
-            return Response(data={"message": "Wrong Verification Code ❌"})
+            return Response(data={"message": "Wrong Verification Code ❌"}, status=status.HTTP_200_OK)
         v_obj = v_obj.first()
         user_ins = v_obj.user
         profile_obj = UserProfile(email=user_ins.email)
         profile_obj.save()
         if user_ins.is_verified:
-            return Response(data={"message": "Account already Verified ✔️"})
+            return Response(data={"message": "Account already Verified ✔️"}, status=status.HTTP_200_OK)
         setattr(user_ins, "is_verified", True)
         user_ins.save()
         v_obj.delete()
-        return Response(data={"message": "Verification Successful ✔️"})
+        return Response(data={"message": "Verification Successful ✔️"}, status=status.HTTP_200_OK)
 
 
 class ChangePasswordMail(APIView):

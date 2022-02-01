@@ -7,8 +7,38 @@ from django.contrib.auth.models import (
 from django.dispatch import receiver
 from django.db.models.signals import pre_delete, post_save
 from cloudinary.models import CloudinaryField
-import threading
+import threading, random
 from core.helper import delete_cloudinary_image
+
+class UserProfile(models.Model):
+    email = models.EmailField(verbose_name="email", unique=True, max_length=60)
+    score = models.IntegerField(blank=True, null=True, default=0)
+    rank = models.IntegerField(blank=True, null=True, default=0)
+    rating = models.IntegerField(blank=True, null=True, default=0)
+    hard_solved = models.IntegerField(blank=True, null=True, default=0)
+    medium_solved = models.IntegerField(blank=True, null=True, default=0)
+    easy_solved = models.IntegerField(blank=True, null=True, default=0)
+    submissions = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.email
+
+class StaticData(models.Model):
+    easy = models.IntegerField(blank=True, null=True, default=0)
+    medium = models.IntegerField(blank=True, null=True, default=0)
+    hard = models.IntegerField(blank=True, null=True, default=0)
+    avatar_count = models.IntegerField(blank=True, null=True, default=0)
+
+    def __str__(self):
+        return "Fixed Data"
+
+
+class Avatar(models.Model):
+    name = models.CharField(max_length=20, blank=True, null=True)
+    image = CloudinaryField("image")
+
+    def __str__(self):
+        return self.name
 
 
 class CustomUserManager(BaseUserManager):
@@ -49,9 +79,10 @@ class CustomUserManager(BaseUserManager):
         user.is_staff = True
         user.is_superuser = True
         user.is_verified = True
-        user.profile_pic = "https://res.cloudinary.com/hhikcz56h/image/upload/v1643479821/aynjv7xxuyrbop7chlor.png"
 
         user.save(using=self._db)
+        profile_obj = UserProfile(email=user.email)
+        profile_obj.save()
         return user
 
 
@@ -95,7 +126,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class AccountVerification(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    verification_code = models.TextField()
+    verification_code = models.CharField(max_length=20)
 
     def __str__(self):
         return self.user.email
@@ -104,49 +135,27 @@ class AccountVerification(models.Model):
 class PasswordChange(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now=True)
-    pass_slug = models.TextField()
+    pass_slug = models.CharField(max_length=20)
 
     def __str__(self):
         return self.user.email
 
 
-class UserProfile(models.Model):
-    email = models.EmailField(verbose_name="email", unique=True, max_length=60)
-    score = models.IntegerField(blank=True, null=True, default=0)
-    rank = models.IntegerField(blank=True, null=True, default=0)
-    rating = models.IntegerField(blank=True, null=True, default=0)
-    hard_solved = models.IntegerField(blank=True, null=True, default=0)
-    medium_solved = models.IntegerField(blank=True, null=True, default=0)
-    easy_solved = models.IntegerField(blank=True, null=True, default=0)
-    submissions = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return self.email
-
-
-class StaticData(models.Model):
-    easy = models.IntegerField(blank=True, null=True, default=0)
-    medium = models.IntegerField(blank=True, null=True, default=0)
-    hard = models.IntegerField(blank=True, null=True, default=0)
-    avatar_count = models.IntegerField(blank=True, null=True, default=0)
-
-    def __str__(self):
-        return "Fixed Data"
-
-
-class Avatar(models.Model):
-    name = models.CharField(max_length=20, blank=True, null=True)
-    image = CloudinaryField("image")
-
-    def __str__(self):
-        return self.name
-
+@receiver(post_save, sender=CustomUser)
+def after_creating_user(sender, instance, created, **kwargs):
+    if not created:
+        return 
+    obj = StaticData.objects.all().first()
+    num = random.randint(0, obj.avatar_count - 1)
+    avatar_objs = Avatar.objects.all()
+    setattr(instance, "profile_pic", avatar_objs[num].image.url)
+    instance.save()
+    return
 
 @receiver(pre_delete, sender=CustomUser)
 def before_deleting_user(sender, instance, *args, **kwargs):
     UserProfile.objects.filter(email=instance.email).delete()
     return
-
 
 @receiver(post_save, sender=Avatar)
 def after_creating_avatar(sender, instance, *args, **kwargs):
