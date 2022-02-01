@@ -10,6 +10,7 @@ from cloudinary.models import CloudinaryField
 import threading, random
 from core.helper import delete_cloudinary_image
 
+
 class UserProfile(models.Model):
     email = models.EmailField(verbose_name="email", unique=True, max_length=60)
     score = models.IntegerField(blank=True, null=True, default=0)
@@ -22,6 +23,7 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.email
+
 
 class StaticData(models.Model):
     easy = models.IntegerField(blank=True, null=True, default=0)
@@ -144,7 +146,7 @@ class PasswordChange(models.Model):
 @receiver(post_save, sender=CustomUser)
 def after_creating_user(sender, instance, created, **kwargs):
     if not created:
-        return 
+        return
     obj = StaticData.objects.all().first()
     num = random.randint(0, obj.avatar_count - 1)
     avatar_objs = Avatar.objects.all()
@@ -152,10 +154,12 @@ def after_creating_user(sender, instance, created, **kwargs):
     instance.save()
     return
 
+
 @receiver(pre_delete, sender=CustomUser)
 def before_deleting_user(sender, instance, *args, **kwargs):
     UserProfile.objects.filter(email=instance.email).delete()
     return
+
 
 @receiver(post_save, sender=Avatar)
 def after_creating_avatar(sender, instance, *args, **kwargs):
