@@ -30,6 +30,7 @@ class StaticData(models.Model):
     medium = models.IntegerField(blank=True, null=True, default=0)
     hard = models.IntegerField(blank=True, null=True, default=0)
     avatar_count = models.IntegerField(blank=True, null=True, default=0)
+    users_count = models.IntegerField(blank=True, null=True, default=0)
 
     def __str__(self):
         return "Fixed Data"
@@ -148,6 +149,8 @@ def after_creating_user(sender, instance, created, **kwargs):
     if not created:
         return
     obj = StaticData.objects.all().first()
+    setattr(obj, "users_count", obj.users_count + 1)
+    obj.save()
     num = random.randint(0, obj.avatar_count - 1)
     avatar_objs = Avatar.objects.all()
     setattr(instance, "profile_pic", avatar_objs[num].image.url)
@@ -158,6 +161,9 @@ def after_creating_user(sender, instance, created, **kwargs):
 @receiver(pre_delete, sender=CustomUser)
 def before_deleting_user(sender, instance, *args, **kwargs):
     UserProfile.objects.filter(email=instance.email).delete()
+    obj = StaticData.objects.all().first()
+    setattr(obj, "users_count", obj.users_count - 1)
+    obj.save()
     return
 
 
