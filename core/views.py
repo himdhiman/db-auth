@@ -13,6 +13,7 @@ from rest_framework import permissions, status
 from django.conf import settings
 import random, string, requests, threading, requests
 from core.helper import convert_to_list
+import cloudinary.uploader
 
 # from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -298,3 +299,11 @@ class GetStaticData(APIView):
         obj = StaticData.objects.all()[0]
         data = serializers.StaticDataSerializer(obj)
         return Response(data=data.data, status=status.HTTP_200_OK)
+
+
+class UploadCloudinary(APIView):
+    permission_classes = (permissions.AllowAny,)
+    def post(self, request):
+        res = cloudinary.uploader.upload(request.data["image"])
+        data = {"url" : res["url"], "public_id" : res["public_id"]}
+        return Response(data = data, status=status.HTTP_201_CREATED)

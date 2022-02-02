@@ -25,4 +25,5 @@ urlpatterns = [
     path("setFixedData/", views.SetFixedData.as_view()),
     path("getProfile/", views.GetUserProfile.as_view()),
     path("getStaticData/", views.GetStaticData.as_view()),
+    path("uploadCloudinary/", views.UploadCloudinary.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
