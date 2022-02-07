@@ -8,7 +8,7 @@ from django.dispatch import receiver
 from django.db.models.signals import pre_delete, post_save
 from cloudinary.models import CloudinaryField
 import threading, random
-from core.helper import delete_cloudinary_image
+from core.helper import delete_cloudinary_image, create_user_notifcation
 
 
 class UserProfile(models.Model):
@@ -148,6 +148,10 @@ class PasswordChange(models.Model):
 def after_creating_user(sender, instance, created, **kwargs):
     if not created:
         return
+    threading.Thread(
+        target=create_user_notifcation,
+        kwargs={"email": instance.email, "create": True, "username": instance.username},
+    ).start()
     obj = StaticData.objects.all().first()
     setattr(obj, "users_count", obj.users_count + 1)
     obj.save()
@@ -161,6 +165,14 @@ def after_creating_user(sender, instance, created, **kwargs):
 @receiver(pre_delete, sender=CustomUser)
 def before_deleting_user(sender, instance, *args, **kwargs):
     UserProfile.objects.filter(email=instance.email).delete()
+    threading.Thread(
+        target=create_user_notifcation,
+        kwargs={
+            "email": instance.email,
+            "create": False,
+            "username": instance.username,
+        },
+    ).start()
     obj = StaticData.objects.all().first()
     setattr(obj, "users_count", obj.users_count - 1)
     obj.save()

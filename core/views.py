@@ -303,7 +303,8 @@ class GetStaticData(APIView):
 
 class UploadCloudinary(APIView):
     permission_classes = (permissions.AllowAny,)
+
     def post(self, request):
         res = cloudinary.uploader.upload(request.data["image"])
-        data = {"url" : res["url"], "public_id" : res["public_id"]}
-        return Response(data = data, status=status.HTTP_201_CREATED)
+        data = {"url": res["url"], "public_id": res["public_id"]}
+        return Response(data=data, status=status.HTTP_201_CREATED)
