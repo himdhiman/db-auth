@@ -142,7 +142,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def to_representation(self, obj):
         primitive_repr = super(UserProfileSerializer, self).to_representation(obj)
-        if obj.submissions != "":
+        if obj.submissions is not None:
             data = convert_to_list(obj.submissions)
             lst = list()
             for i in data:

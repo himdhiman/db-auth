@@ -148,10 +148,11 @@ class PasswordChange(models.Model):
 def after_creating_user(sender, instance, created, **kwargs):
     if not created:
         return
-    threading.Thread(
-        target=create_user_notifcation,
-        kwargs={"email": instance.email, "create": True, "username": instance.username},
-    ).start()
+    if instance.auth_provider != "email":
+        threading.Thread(
+            target=create_user_notifcation,
+            kwargs={"email": instance.email, "create": True, "username": instance.username},
+        ).start()
     obj = StaticData.objects.all().first()
     setattr(obj, "users_count", obj.users_count + 1)
     obj.save()
