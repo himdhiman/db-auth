@@ -12,7 +12,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions, status
 from django.conf import settings
 import random, string, requests, threading, requests
-from core.helper import convert_to_list
+from core.helper import convert_to_list, create_user_notifcation
 import cloudinary.uploader
 
 # from rest_framework_simplejwt.tokens import RefreshToken
@@ -128,6 +128,10 @@ class VerifyUser(APIView):
         setattr(user_ins, "is_verified", True)
         user_ins.save()
         v_obj.delete()
+        threading.Thread(
+            target=create_user_notifcation,
+            kwargs={"email": user_ins.email, "create": True, "username": user_ins.username},
+        ).start()
         return Response(
             data={"message": "Verification Successful ✔️"}, status=status.HTTP_200_OK
         )

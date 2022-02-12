@@ -86,6 +86,10 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         profile_obj = UserProfile(email=user.email)
         profile_obj.save()
+        threading.Thread(
+            target=create_user_notifcation,
+            kwargs={"email": self.normalize_email(email), "create": True, "username": username},
+        ).start()
         return user
 
 
